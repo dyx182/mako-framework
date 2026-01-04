@@ -10,23 +10,16 @@ public class TestContext {
 
 
     /**
-     * Хранит все данные для ОДНОГО конкретного теста.
+     * Хранятся все данные для одного конкретного теста.
      */
 
     private final Map<String, String> locators = new HashMap<>();
-
     private final Map<String, Object> variables = new HashMap<>();
 
-    /**
-     * Добавить локатор в контекст.
-     */
     public void addLocator(String elementName, String locator) {
         locators.put(elementName, locator);
     }
 
-    /**
-     * Получить локатор из контекста.
-     */
     public String getLocator(String elementName) {
         String locator = locators.get(elementName);
         if (locator == null) {

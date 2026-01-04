@@ -38,7 +38,6 @@ public class LocatorManager {
 
     }
 
-
     /**
      * Получает By объект для элемента по его имени.
      *
