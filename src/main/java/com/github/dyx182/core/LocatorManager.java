@@ -3,8 +3,11 @@ package com.github.dyx182.core;
 import org.openqa.selenium.By;
 import org.yaml.snakeyaml.Yaml;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class LocatorManager {
@@ -12,56 +15,78 @@ public class LocatorManager {
     private final Yaml yaml = new Yaml();
 
     /**
-     * Загружает локаторы из YAML файла и помещает их в контекст теста.
-     *
-     * @param context Контекст теста (куда загружать)
-     * @param filePath Путь к YAML файлу с локаторами
+     * Основной метод: загружает нужные страницы для теста
      */
-    public void loadIntoContext(TestContext context, String filePath) {
-        System.out.println("loading locators from file " + filePath);
+    public void loadRequiredPages(TestContext context, String pagesFolder, List<String> requiredPages) {
+        if (requiredPages == null || requiredPages.isEmpty()) {
+            throw new RuntimeException("Test doesn't use any pages. " +
+                    "Use 'page.element' format in test steps (e.g., 'login.username').");
+        }
 
-        try(InputStream inputStream = new FileInputStream(filePath)) {
+        List<String> loadedPages = new ArrayList<>();
 
-            Map<String, String> loadedLocators = yaml.load(inputStream);
+        //todo remove it!
 
-            if (loadedLocators != null && !loadedLocators.isEmpty()) {
-                context.loadLocators(loadedLocators);
-                System.out.println("loaded locators " + loadedLocators.size());
+        // loadPageIfExists(context, pagesFolder, "common", loadedPages);
+
+        for (String page : requiredPages) {
+            loadPage(context, pagesFolder, page, loadedPages);
+        }
+    }
+
+    private void loadPage(TestContext context, String folder, String pageName, List<String> loadedPages) {
+        String filePath = folder + "/" + pageName + ".yml";
+        File file = new File(filePath);
+
+        if (!file.exists()) {
+            throw new RuntimeException("Page file not found: " + filePath +
+                    "\nRequired by test. Create file or fix page name in test.");
+        }
+
+        try (InputStream inputStream = new FileInputStream(file)) {
+            Map<String, String> pageLocators = yaml.load(inputStream);
+
+            if (pageLocators == null || pageLocators.isEmpty()) {
+                System.out.println("Page '" + pageName + "' is empty");
             } else {
-                System.out.println("file with locators is empty");
+                context.loadPage(pageName, pageLocators);
+                loadedPages.add(pageName + " (" + pageLocators.size() + " locators)");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to load page: " + pageName, e);
+        }
+    }
+
+    private void loadPageIfExists(TestContext context, String folder, String pageName, List<String> loadedPages) {
+        String filePath = folder + "/" + pageName + ".yml";
+        File file = new File(filePath);
+
+        if (file.exists()) {
+            loadPage(context, folder, pageName, loadedPages);
+        }
+    }
+
+    /**
+     * Получить By локатор по полному пути "page.element"
+     */
+    public By getLocator(TestContext context, String elementPath) {
+        try {
+            if (!elementPath.contains(".")) {
+                throw new IllegalArgumentException(
+                        "Element must specify page: '" + elementPath + "'\n" +
+                                "Use format: 'page.element' (e.g., 'login.username')"
+                );
             }
 
-        } catch (Exception e) {
-            System.err.println("error " + e.getMessage());
-            throw new RuntimeException("locators not loaded from " + filePath, e);
-        }
-
-    }
-
-    /**
-     * Получает By объект для элемента по его имени.
-     *
-     * @param context Контекст теста (откуда брать)
-     * @param elementName Имя элемента из шага теста
-     * @return By объект для поиска элемента
-     */
-    public By getLocator(TestContext context, String elementName) {
-        try {
-            String locatorString = context.getLocator(elementName);
+            String locatorString = context.getLocator(elementPath);
             By locator = LocatorResolver.resolve(locatorString);
-            System.out.println("locator defined " + elementName + ": " + locatorString);
+
+            System.out.println("Using locator: " + elementPath + " = " + locatorString);
             return locator;
+
         } catch (Exception e) {
-            System.err.println("locator not defined to element " + elementName);
+            System.err.println("Failed to get locator: " + elementPath);
             throw e;
         }
-    }
-
-    /**
-     * Добавляет новый локатор в контекст (для динамических элементов).
-     */
-    public void addLocator(TestContext context, String elementName, String locatorString) {
-        context.addLocator(elementName, locatorString);
-        System.out.println("added locator: " + elementName + " = " + locatorString);
     }
 }

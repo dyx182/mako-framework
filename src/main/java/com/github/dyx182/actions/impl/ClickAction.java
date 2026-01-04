@@ -22,12 +22,9 @@ public class ClickAction implements TestAction {
     @Override
     public void execute(TestContext context, Map<String, Object> params) {
         validateParams(params);
-
-        String nameElement = (String) params.get("element");
-        By locator = locatorManager.getLocator(context, nameElement);
-
+        String elementName = (String) params.get("element");
+        By locator = locatorManager.getLocator(context, elementName);
         TestDSL.click(locator);
-
-        System.out.println("Execute click on element - " + nameElement);
+        System.out.println("Execute click on element - " + elementName);
     }
 }

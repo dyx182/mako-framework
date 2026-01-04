@@ -8,4 +8,5 @@ import java.util.List;
 public class TestCase {
     private String name;
     private List<TestStep> steps;
+    private List<String> requiredPages;
 }

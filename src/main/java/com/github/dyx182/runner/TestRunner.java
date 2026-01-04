@@ -17,17 +17,15 @@ public class TestRunner {
     /**
      * Запуск теста из YAML файла.
      *
-     * @param testFilePath     Путь к YAML файлу теста
-     * @param locatorsFilePath Путь к YAML файлу локаторов
+     * @param testFilePath Путь к YAML файлу теста
+     * @param pagesFolder Папка с файлами страниц
      */
-    public void runTest(String testFilePath, String locatorsFilePath) {
+    public void runTest(String testFilePath, String pagesFolder) {
         TestContext context = new TestContext();
         try {
-            locatorManager.loadIntoContext(context, locatorsFilePath);
             TestCase testCase = parser.parseTest(testFilePath);
+            locatorManager.loadRequiredPages(context, pagesFolder, testCase.getRequiredPages());
             executeTestCase(testCase, context);
-            System.out.println("Test complete " + testCase.getName());
-
         } finally {
             if (context != null) {
                 context.clear();

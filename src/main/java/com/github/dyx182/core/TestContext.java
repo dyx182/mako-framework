@@ -8,22 +8,37 @@ import java.util.Map;
 @ToString
 public class TestContext {
 
-
     /**
-     * Хранятся все данные для одного конкретного теста.
+     * В переменных хранятся все данные для одного конкретного теста.
      */
-
     private final Map<String, String> locators = new HashMap<>();
     private final Map<String, Object> variables = new HashMap<>();
 
-    public void addLocator(String elementName, String locator) {
-        locators.put(elementName, locator);
+    public void addLocator(String page, String elementName, String locator) {
+        String key = page + "." + elementName;
+        locators.put(key, locator);
     }
 
-    public String getLocator(String elementName) {
-        String locator = locators.get(elementName);
+    /**
+     * Загрузить локаторы страницы
+     */
+    public void loadPage(String pageName, Map<String, String> pageLocators) {
+        if (pageLocators != null) {
+            for (Map.Entry<String, String> entry : pageLocators.entrySet()) {
+                String key = pageName + "." + entry.getKey();
+                locators.put(key, entry.getValue());
+            }
+        }
+    }
+
+    /**
+     * Получить локатор по полному пути "page.element"
+     */
+    public String getLocator(String fullPath) {
+        String locator = locators.get(fullPath);
         if (locator == null) {
-            throw new RuntimeException("locator '" + elementName + "' not found in context");
+            throw new RuntimeException("Locator not found: '" + fullPath +
+                    "'. Available: " + locators.keySet());
         }
         return locator;
     }
@@ -31,15 +46,15 @@ public class TestContext {
     /**
      * Загрузить несколько локаторов сразу (из YAML файла).
      */
-    public void loadLocators(Map<String, String> newLocators) {
+    public void loadLocators(String page, Map<String, String> newLocators) {
         if (newLocators != null) {
-            locators.putAll(newLocators);
+            for (Map.Entry<String, String> entry : newLocators.entrySet()) {
+                String key = page + "." + entry.getKey();
+                this.locators.put(key, entry.getValue());
+            }
         }
     }
 
-    /**
-     * Проверить, есть ли локатор в контексте.
-     */
     public boolean hasLocator(String elementName) {
         return locators.containsKey(elementName);
     }

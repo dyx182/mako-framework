@@ -6,17 +6,13 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ParserYaml {
 
     private final Yaml yaml = new Yaml();
 
     public TestCase parseTest(String inputFile) {
-
         try (InputStream inputStream = new FileInputStream(inputFile)) {
             Map<String, Object> rawData = yaml.load(inputStream);
 
@@ -25,6 +21,8 @@ public class ParserYaml {
 
             List<TestStep> steps = new ArrayList<>();
             Object stepsObject = rawData.get("steps");
+
+            Set<String> requiredPages = new HashSet<>(); // сбор страниц
 
             if (stepsObject instanceof List) {
                 @SuppressWarnings("unchecked")
@@ -39,9 +37,18 @@ public class ParserYaml {
                     step.setParams(parameters);
 
                     steps.add(step);
+
+                    String element = step.getStringParam("element"); // Извлекаем страницу из element (формат: "page.element")
+                    if (element != null && element.contains(".")) {
+                        String page = element.substring(0, element.indexOf('.'));
+                        requiredPages.add(page);
+                    }
                 }
             }
+
             testCase.setSteps(steps);
+            testCase.setRequiredPages(new ArrayList<>(requiredPages));
+
             return testCase;
 
         } catch (Exception e) {

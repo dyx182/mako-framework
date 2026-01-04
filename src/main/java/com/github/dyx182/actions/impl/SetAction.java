@@ -32,12 +32,9 @@ public class SetAction implements TestAction {
     @Override
     public void execute(TestContext context, Map<String, Object> params) {
         validateParams(params);
-
         String elementName = (String) params.get("element");
         String text = (String) params.get("text");
-
         By locator = locatorManager.getLocator(context, elementName);
-
         TestDSL.set(locator, text);
 
         //todo добавить прокидку в переменную введенного текста и добавить поддержку переменных для вводимого текста
