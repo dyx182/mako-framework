@@ -16,7 +16,7 @@ public class SetAction implements TestAction {
 
     @Override
     public String getName() {
-        return "Set input";
+        return "Set";
     }
 
     @Override
