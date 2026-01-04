@@ -3,16 +3,14 @@ package com.github.dyx182.actions;
 import com.github.dyx182.actions.impl.ClickAction;
 import com.github.dyx182.actions.impl.SetAction;
 import com.github.dyx182.core.LocatorManager;
-import lombok.AllArgsConstructor;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@AllArgsConstructor
 public class ActionManager {
 
     private final Map<String, TestAction> actionsRegistry = new HashMap<>();
-    private final LocatorManager locatorManager;
+    private final LocatorManager locatorManager = new LocatorManager();
 
     private void registerActions() {
         register(new ClickAction(locatorManager));

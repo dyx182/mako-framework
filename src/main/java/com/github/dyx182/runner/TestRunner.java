@@ -7,15 +7,12 @@ import com.github.dyx182.core.TestContext;
 import com.github.dyx182.model.TestCase;
 import com.github.dyx182.model.TestStep;
 import com.github.dyx182.parser.ParserYaml;
-import lombok.AllArgsConstructor;
 
-
-@AllArgsConstructor
 public class TestRunner {
 
-    private final ParserYaml parser;
-    private final LocatorManager locatorManager;
-    private final ActionManager actionManager;
+    private final ParserYaml parser = new ParserYaml();
+    private final LocatorManager locatorManager = new LocatorManager();
+    private final ActionManager actionManager = new ActionManager();
 
     /**
      * Запуск теста из YAML файла.

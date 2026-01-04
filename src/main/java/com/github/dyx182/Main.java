@@ -14,7 +14,7 @@ public class Main {
         try {
             TestRunner runner = new TestRunner();
             runner.runTest(testFile, locatorsFile);
-            System.out.println("test sucsess");
+            System.out.println("test complete");
         } catch (Exception e) {
             System.err.println("error" + e.getMessage());
             System.exit(1);
