@@ -5,6 +5,9 @@ import lombok.ToString;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * TestContext - центральное хранилище данных теста.
+ */
 @ToString
 public class TestContext {
 

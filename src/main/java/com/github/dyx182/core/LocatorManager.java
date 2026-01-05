@@ -68,6 +68,8 @@ public class LocatorManager {
 
     /**
      * Получить By локатор по полному пути "page.element"
+     * @param context Контекст теста
+     * @param elementPath страница.название элемента
      */
     public By getLocator(TestContext context, String elementPath) {
         try {

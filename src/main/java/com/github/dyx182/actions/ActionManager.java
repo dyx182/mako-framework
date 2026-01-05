@@ -1,5 +1,6 @@
 package com.github.dyx182.actions;
 
+import com.github.dyx182.actions.impl.AssertTextAction;
 import com.github.dyx182.actions.impl.ClickAction;
 import com.github.dyx182.actions.impl.OpenAction;
 import com.github.dyx182.actions.impl.SetAction;
@@ -20,6 +21,7 @@ public class ActionManager {
     private void registerActions() {
         register(new ClickAction(locatorManager));
         register(new SetAction(locatorManager));
+        register(new AssertTextAction(locatorManager));
         register(new OpenAction());
     }
 
