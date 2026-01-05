@@ -10,7 +10,7 @@ public class OpenAction implements TestAction {
 
     @Override
     public String getName() {
-        return "Open";
+        return "open";
     }
 
     @Override

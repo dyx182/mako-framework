@@ -10,19 +10,19 @@ import org.openqa.selenium.By;
 import java.util.Map;
 
 @AllArgsConstructor
-public class SetAction implements TestAction {
+public class AssertTextAction implements TestAction {
 
-    private final LocatorManager locatorManager;
+    LocatorManager locatorManager;
 
     @Override
     public String getName() {
-        return "set_text";
+        return "assert_text";
     }
 
     @Override
     public void validateParams(Map<String, Object> params) {
-        if (!params.containsKey("element") || !params.containsKey("text")) {
-            throw new IllegalArgumentException("Expected parameter - element or text");
+        if(!params.containsKey("element") || !params.containsKey("expected_text")) {
+            throw new IllegalArgumentException("Expected parameter - element or expected_text");
         }
     }
 
@@ -30,10 +30,8 @@ public class SetAction implements TestAction {
     public void execute(TestContext context, Map<String, Object> params) {
         validateParams(params);
         String elementName = (String) params.get("element");
-        String text = (String) params.get("text");
         By locator = locatorManager.getLocator(context, elementName);
-        TestDSL.set(locator, text);
-
-        //todo добавить прокидку в переменную введенного текста и добавить поддержку переменных для вводимого текста
+        String expectedText = (String) params.get("expected_text");
+        TestDSL.assertText(expectedText, locator);
     }
 }

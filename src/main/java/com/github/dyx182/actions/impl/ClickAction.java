@@ -16,7 +16,7 @@ public class ClickAction implements TestAction {
 
     @Override
     public String getName() {
-        return "Click";
+        return "click";
     }
 
     @Override
